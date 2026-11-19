@@ -174,3 +174,7 @@ h1{font-size:clamp(32px,4.4vw,48px);letter-spacing:-1.8px}
 .received-file .item-meta{margin-top:4px;font-size:10px;color:#7f8790}
 .received-item .download{background:#252525;color:#fff;border-radius:6px;padding:10px 13px;font-size:11px}
 @media(max-width:420px){.received-item{gap:8px;padding:10px}.received-item .download{padding:9px 10px;font-size:10px}.item-message{font-size:12px}}
+
+
+.room.host-view.host-share-open .share-card{display:block}
+.room.host-connected #shareFromHere{margin-top:10px}
