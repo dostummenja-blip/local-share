@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7fb">
+  <title>Local Share — move files privately</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style-extra.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="top"><a class="brand" href="./">Local<span>Share</span></a><span class="badge"><i></i> YOUR DEVICES</span></header>
+    <section class="hero" id="home">
+      <p class="eyebrow">QUICK DEVICE TRANSFER</p>
+      <h1>Send it to<br><span>your other screen.</span></h1>
+      <p class="intro">A temporary bridge between your devices. Your computer hosts the transfer; files are removed from it after download.</p>
+      <button class="primary" id="create">Create a connection <b>→</b></button>
+      <p class="hint" id="status">Your computer must be running the Local Share server.</p>
+      <div class="manual-join"><span>or join with a code</span><div><input id="joinCode" maxlength="10" placeholder="ROOM CODE" autocomplete="off"><button id="join">Join</button></div></div>
+    </section>
+    <section class="room hidden" id="room">
+      <div class="room-head"><div><p class="eyebrow">CONNECTED ROOM</p><h2>Ready to share</h2></div><span class="code" id="code"></span></div>
+      <div class="grid">
+        <div class="card qr-card"><div id="qr"></div><p>Scan this QR on your other device</p><button class="copy" id="copyLink">Copy connection link</button></div>
+        <div class="card share-card">
+          <div class="tabs"><button class="tab active" data-tab="text">Text</button><button class="tab" data-tab="file">File</button></div>
+          <div id="textPane"><label for="message">Message or snippet</label><textarea id="message" placeholder="Type or paste text here..."></textarea><button class="primary full" id="sendText">Send text</button></div>
+          <div id="filePane" class="hidden"><label class="drop" for="file"><span class="upload-icon">↑</span><strong>Choose a file</strong><small>Opens the file picker on this device</small><input type="file" id="file"></label><p class="filename" id="filename">No file selected</p><button class="primary full" id="sendFile" disabled>Upload file</button></div>
+          <p class="hint" id="roomStatus">Anyone with this room link can join.</p>
+        </div>
+      </div>
+      <div class="card items-card"><div class="items-head"><h3>Shared items</h3><span>Files disappear 3 minutes after the first completed download</span></div><div id="items"><p class="empty">Nothing shared yet. Send text or a file from either device.</p></div></div>
+    </section>
+    <footer>Hosted on GitHub Pages · Transfers run through your computer</footer>
+  </main>
+  <script src="config.js"></script><script src="app.js"></script>
+</body>
+</html>

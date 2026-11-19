@@ -1,0 +1,13 @@
+{
+  "name": "local-share",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GitHub Pages UI with a self-hosted file relay",
+  "scripts": { "start": "node server.js" },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "multer": "^2.5.0",
+    "qrcode": "^1.5.4"
+  }
+}
