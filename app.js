@@ -4,7 +4,7 @@
   const params = new URLSearchParams(location.search);
   let room = params.get('room');
   const hostView = params.get('host') === '1';
-  let poller;
+  let poller; let guestHeartbeat; const guestId = window.crypto?.randomUUID ? window.crypto.randomUUID() : 'guest-' + Math.random().toString(36).slice(2);
 
   function status(message, isError = false) {
     const target = $('status');
@@ -47,13 +47,13 @@
     $('roomCodeManual').textContent = code;
     $('inviteLink').value = location.origin + location.pathname + '?room=' + encodeURIComponent(code);
     $('roomStatus').textContent = asHost ? 'Waiting for someone to scan and send an item.' : 'Choose text or a file to send to the connected computer.';
-    setPanels('room', 'scan');
+    setPanels('room', 'scan'); clearInterval(guestHeartbeat); if (asHost) updateHostConnection(false, false); else { announceGuest(); guestHeartbeat = setInterval(announceGuest, 5000); } if (asHost) refreshPresence();
     if (asHost && qrData) setRoomQR(qrData);
     else if (asHost) request('/api/rooms/' + encodeURIComponent(code) + '/qr').then(data => setRoomQR(data.qr)).catch(error => { $('roomStatus').textContent = error.message; });
     history.replaceState({}, '', location.pathname + '?room=' + encodeURIComponent(code) + (asHost ? '&host=1' : ''));
     refreshItems();
     clearInterval(poller);
-    poller = setInterval(refreshItems, 2500);
+    poller = setInterval(() => { refreshItems(); if (hostView) refreshPresence(); }, 2500);
   }
   async function refreshItems() {
     if (!room) return;
@@ -147,4 +147,22 @@
 
   if (room) showRoom(room, null, hostView);
   else createRoom();
+  function updateHostConnection(connected, hasItems = false) {
+    if (!hostView) return;
+    $('room').classList.toggle('host-connected', connected);
+    $('connectionTitle').textContent = connected ? 'Sender device connected' : 'Scan to join this room';
+    $('connectionMessage').textContent = connected ? (hasItems ? 'Data received. See the shared item below.' : 'Waiting for data!') : 'Point your other device’s camera at this code.';
+  }
+  async function announceGuest() {
+    if (!room || hostView) return;
+    try { await request('/api/rooms/' + encodeURIComponent(room) + '/join', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ clientId: guestId }) }); } catch {}
+  }
+  async function refreshPresence() {
+    if (!room || !hostView) return;
+    try {
+      const presence = await request('/api/rooms/' + encodeURIComponent(room) + '/status');
+      const payload = await request('/api/rooms/' + encodeURIComponent(room) + '/items');
+      updateHostConnection(presence.connected, payload.items.length > 0);
+    } catch {}
+  }
 })();
