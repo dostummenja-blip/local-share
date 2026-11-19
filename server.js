@@ -64,7 +64,7 @@ app.get('/api/rooms/:code/qr', async (req, res, next) => {
 app.post('/api/rooms', async (_req, res, next) => {
   try {
     let roomCode; do { roomCode = code(); } while (rooms.has(roomCode));
-    const room = { code: roomCode, expiresAt: Date.now() + 60 * 60 * 1000 };
+    const room = { code: roomCode, expiresAt: Date.now() + 60 * 60 * 1000, guests: new Map() };
     rooms.set(roomCode, room);
     const joinUrl = `${FRONTEND_URL}/?room=${roomCode}`;
     res.json({ code: roomCode, joinUrl, qr: await QRCode.toDataURL(joinUrl, { margin: 2, width: 190, color: { dark: '#17202f', light: '#ffffff' } }) });
@@ -118,3 +118,20 @@ app.use((error, _req, res, _next) => {
   res.status(500).json({ error: 'Unexpected server error.' });
 });
 app.listen(PORT, '0.0.0.0', () => console.log(`SendGet API listening on 0.0.0.0:${PORT}; GitHub Pages origin: ${CORS_ORIGIN}`));
+
+
+app.post('/api/rooms/:code/join', (req, res) => {
+  const room = getRoom(req.params.code);
+  if (!room) return res.status(404).json({ error: 'Room expired or not found.' });
+  const clientId = typeof req.body.clientId === 'string' ? req.body.clientId.slice(0, 80) : '';
+  if (!clientId) return res.status(400).json({ error: 'A client ID is required.' });
+  room.guests.set(clientId, Date.now());
+  res.json({ connected: true });
+});
+app.get('/api/rooms/:code/status', (req, res) => {
+  const room = getRoom(req.params.code);
+  if (!room) return res.status(404).json({ error: 'Room expired or not found.' });
+  const cutoff = Date.now() - 20_000;
+  for (const [clientId, lastSeen] of room.guests) if (lastSeen < cutoff) room.guests.delete(clientId);
+  res.json({ connected: room.guests.size > 0, activeSenders: room.guests.size });
+});
