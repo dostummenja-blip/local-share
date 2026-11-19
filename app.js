@@ -53,7 +53,7 @@
     history.replaceState({}, '', location.pathname + '?room=' + encodeURIComponent(code) + (asHost ? '&host=1' : ''));
     refreshItems();
     clearInterval(poller);
-    poller = setInterval(() => { refreshItems(); if (hostView) refreshPresence(); }, 2500);
+    poller = setInterval(() => { refreshItems(); if (asHost) refreshPresence(); }, 2500);
   }
   async function refreshItems() {
     if (!room) return;
@@ -148,7 +148,7 @@
   if (room) showRoom(room, null, hostView);
   else createRoom();
   function updateHostConnection(connected, hasItems = false) {
-    if (!hostView) return;
+    if (!$('room').classList.contains('host-view')) return;
     $('room').classList.toggle('host-connected', connected);
     $('connectionTitle').textContent = connected ? 'Sender device connected' : 'Scan to join this room';
     $('connectionMessage').textContent = connected ? (hasItems ? 'Data received. See the shared item below.' : 'Waiting for data!') : 'Point your other device’s camera at this code.';
@@ -158,7 +158,7 @@
     try { await request('/api/rooms/' + encodeURIComponent(room) + '/join', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ clientId: guestId }) }); } catch {}
   }
   async function refreshPresence() {
-    if (!room || !hostView) return;
+    if (!room || !$('room').classList.contains('host-view')) return;
     try {
       const presence = await request('/api/rooms/' + encodeURIComponent(room) + '/status');
       const payload = await request('/api/rooms/' + encodeURIComponent(room) + '/items');
