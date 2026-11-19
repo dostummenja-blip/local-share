@@ -107,11 +107,11 @@
       tab.classList.toggle('active', active);
       tab.setAttribute('aria-selected', String(active));
     });
-    $('textPane').classList.toggle('hidden', button.dataset.tab !== 'text');
+    $('textPane').classList.toggle('hidden', button.dataset.tab !== 'text'); $('passwordPane').classList.toggle('hidden', button.dataset.tab !== 'password');
     $('filePane').classList.toggle('hidden', button.dataset.tab !== 'file');
   }));
   if ($('create')) $('create').addEventListener('click', createRoom);
-  if ($('createInvite')) $('createInvite').addEventListener('click', createRoom);
+  if ($('createInvite')) $('createInvite').addEventListener('click', createRoom); $('shareFromHere').addEventListener('click', () => { const opening = !$('room').classList.contains('host-share-open'); $('room').classList.toggle('host-share-open', opening); $('shareFromHere').textContent = opening ? 'Close sharing' : 'Share from this device'; if (opening) document.querySelector('.share-tab[data-tab="text"]').click(); });
   $('join').addEventListener('click', async () => {
     const code = $('joinCode').value.trim().toUpperCase();
     if (!code) { status('Enter the room code.', true); return; }
@@ -134,15 +134,15 @@
     const text = $('message').value;
     if (!text.trim()) { $('roomStatus').textContent = 'Enter some text first.'; return; }
     $('sendText').disabled = true;
-    try { await request('/api/rooms/' + encodeURIComponent(room) + '/text', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) }); $('message').value = ''; $('roomStatus').textContent = 'Text sent to your computer.'; await refreshItems(); }
+    try { await request('/api/rooms/' + encodeURIComponent(room) + '/text', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) }); $('message').value = ''; $('roomStatus').textContent = hostView ? 'Text sent to your phone.' : 'Text sent to your computer.'; await refreshItems(); }
     catch (error) { $('roomStatus').textContent = error.message; }
     finally { $('sendText').disabled = false; }
   });
-  $('sendFile').addEventListener('click', async () => {
+  $('sendPassword').addEventListener('click', async () => { const text = $('passwordMessage').value; if (!text.trim()) { $('roomStatus').textContent = 'Enter a password first.'; return; } $('sendPassword').disabled = true; try { await request('/api/rooms/' + encodeURIComponent(room) + '/text', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) }); $('passwordMessage').value = ''; $('roomStatus').textContent = hostView ? 'Password sent to your phone.' : 'Password sent to your computer.'; await refreshItems(); } catch (error) { $('roomStatus').textContent = error.message; } finally { $('sendPassword').disabled = false; } }); $('sendFile').addEventListener('click', async () => {
     const file = $('file').files[0]; if (!file) return;
     const form = new FormData(); form.append('file', file);
-    $('sendFile').disabled = true; $('roomStatus').textContent = 'Sending to your computer…';
-    try { await request('/api/rooms/' + encodeURIComponent(room) + '/files', { method: 'POST', body: form }); $('file').value = ''; $('filename').textContent = 'No file selected'; $('roomStatus').textContent = 'Sent. The file is ready on your computer.'; await refreshItems(); }
+    $('sendFile').disabled = true; $('roomStatus').textContent = hostView ? 'Sending to your phone…' : 'Sending to your computer…';
+    try { await request('/api/rooms/' + encodeURIComponent(room) + '/files', { method: 'POST', body: form }); $('file').value = ''; $('filename').textContent = 'No file selected'; $('roomStatus').textContent = hostView ? 'File sent to your phone.' : 'Sent. The file is ready on your computer.'; await refreshItems(); }
     catch (error) { $('roomStatus').textContent = error.message; }
     finally { $('sendFile').disabled = false; }
   });
@@ -151,7 +151,7 @@
   else createRoom();
   function updateHostConnection(connected, hasItems = false) {
     if (!$('room').classList.contains('host-view')) return;
-    $('room').classList.toggle('host-connected', connected);
+    $('room').classList.toggle('host-connected', connected); $('shareFromHere').classList.toggle('hidden', !connected); if (!connected) { $('room').classList.remove('host-share-open'); $('shareFromHere').textContent = 'Share from this device'; }
     $('connectionTitle').textContent = connected ? 'Sender device connected' : 'Scan to join this room';
     $('connectionMessage').textContent = connected ? (hasItems ? 'Data received. See the shared item below.' : 'Waiting for data!') : 'Point your other device’s camera at this code.';
   }
