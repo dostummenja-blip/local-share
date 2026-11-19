@@ -80,7 +80,7 @@
         if (item.kind === 'file') {
           const link = document.createElement('a'); link.className = 'download'; link.href = api + '/api/items/' + encodeURIComponent(item.id) + '/download'; link.textContent = 'Download'; link.setAttribute('download', item.name); row.append(link);
         } else {
-          const copy = document.createElement('button'); copy.className = 'download'; copy.textContent = 'Copy to clipboard';
+          const copy = document.createElement('button'); copy.className = 'download copy-message'; copy.textContent = 'Copy to clipboard';
           copy.addEventListener('click', async () => { try { await navigator.clipboard.writeText(item.text); copy.textContent = 'Copied'; } catch { copy.textContent = 'Clipboard blocked'; } });
           row.append(copy);
         }
