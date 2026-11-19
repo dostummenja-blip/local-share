@@ -37,10 +37,10 @@ function getRoom(code) {
 }
 function publicItem(item) {
   const result = { id: item.id, kind: item.kind, name: item.name };
-  if (item.kind === 'text') result.text = item.text;
+  if (item.kind === 'text') { result.text = item.text; result.remainingMs = Math.max(0, item.expiresAt - Date.now()); }
   else {
     result.sizeLabel = `${(item.size / 1024 / 1024).toFixed(2)} MB`;
-    if (item.deleteAt) result.remainingMs = Math.max(0, item.deleteAt - Date.now());
+    result.remainingMs = Math.max(0, (item.deleteAt || item.expiresAt) - Date.now());
   }
   return result;
 }
@@ -80,7 +80,7 @@ app.post('/api/rooms/:code/text', (req, res) => {
   if (typeof req.body.text !== 'string' || !req.body.text.trim()) return res.status(400).json({ error: 'Text is empty.' });
   if (Buffer.byteLength(req.body.text, 'utf8') > 100_000) return res.status(413).json({ error: 'Text is too long (100 KB max).' });
   const id = crypto.randomUUID();
-  items.set(id, { id, room: req.params.code, kind: 'text', name: 'Text snippet', text: req.body.text, expiresAt: Date.now() + 30 * 60 * 1000 });
+  items.set(id, { id, room: req.params.code, kind: 'text', name: 'Text snippet', text: req.body.text, expiresAt: Date.now() + 3 * 60 * 1000 });
   res.status(201).json({ id });
 });
 app.post('/api/rooms/:code/files', (req, res, next) => {
