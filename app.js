@@ -59,6 +59,7 @@
     if (!room) return;
     try {
       const result = await request('/api/rooms/' + encodeURIComponent(room) + '/items');
+      $('room').classList.toggle('guest-has-items', !hostView && result.items.length > 0);
       const list = $('items');
       list.replaceChildren();
       if (!result.items.length) {
@@ -69,16 +70,17 @@
         return;
       }
       for (const item of result.items) {
-        const row = document.createElement('div'); row.className = 'item';
-        const details = document.createElement('div');
+        const row = document.createElement('div'); row.className = 'item received-item ' + (item.kind === 'text' ? 'received-text' : 'received-file');
+        const details = document.createElement('div'); details.className = 'received-details';
         const title = document.createElement('div'); title.className = 'item-title'; title.textContent = item.name;
         const meta = document.createElement('div'); meta.className = 'item-meta';
-        meta.textContent = item.kind === 'text' ? 'Text snippet' : item.sizeLabel + (item.remainingMs ? ' · ' + Math.ceil(item.remainingMs / 1000) + ' sec left' : '');
+        const seconds = Math.max(0, Math.ceil((item.remainingMs || 0) / 1000)); const countdown = 'Clears in ' + Math.floor(seconds / 60) + ' min ' + (seconds % 60) + ' sec'; meta.textContent = item.kind === 'text' ? countdown : item.sizeLabel + ' · ' + countdown;
         details.append(title, meta); row.append(details);
+        if (item.kind === 'text') { const message = document.createElement('div'); message.className = 'item-message'; message.textContent = item.text; row.append(message); }
         if (item.kind === 'file') {
           const link = document.createElement('a'); link.className = 'download'; link.href = api + '/api/items/' + encodeURIComponent(item.id) + '/download'; link.textContent = 'Download'; link.setAttribute('download', item.name); row.append(link);
         } else {
-          const copy = document.createElement('button'); copy.className = 'download'; copy.textContent = 'Copy text';
+          const copy = document.createElement('button'); copy.className = 'download'; copy.textContent = 'Copy to clipboard';
           copy.addEventListener('click', async () => { try { await navigator.clipboard.writeText(item.text); copy.textContent = 'Copied'; } catch { copy.textContent = 'Clipboard blocked'; } });
           row.append(copy);
         }
