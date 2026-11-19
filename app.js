@@ -141,4 +141,5 @@
   });
 
   if (room) showRoom(room);
+  else createRoom();
 })();
