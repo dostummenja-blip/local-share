@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#64a7dd">
   <meta name="description" content="Send text and files between your devices with SendGet.">
   <title>SendGet — frictionless sharing between devices</title>
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
   <header class="site-header">
@@ -62,7 +62,7 @@
             <div class="room-connect-panel" id="room-scan">
               <div id="qr" class="qr-image"></div>
               <h3 id="connectionTitle">Scan to join this room</h3>
-              <p id="connectionMessage">Point your other device’s camera at this code.</p>
+              <p id="connectionMessage">Point your other device’s camera at this code.</p><button class="primary hidden" id="shareFromHere">Share from here</button>
             </div>
             <div class="room-connect-panel hidden" id="room-manual">
               <div class="mini-icon" aria-hidden="true">⌨</div>
@@ -83,10 +83,10 @@
           </div>
           <div class="connection-card share-card">
             <div class="share-tabs" role="tablist" aria-label="Choose what to send">
-              <button class="share-tab active" data-tab="text" role="tab" aria-selected="true">Text</button>
+              <button class="share-tab" data-tab="password" role="tab" aria-selected="false">Password</button><button class="share-tab active" data-tab="text" role="tab" aria-selected="true">Text</button>
               <button class="share-tab" data-tab="file" role="tab" aria-selected="false">File</button>
             </div>
-            <div id="textPane"><label for="message">Share text or a password</label><textarea id="message" placeholder="Type or paste text here…"></textarea><button class="primary full" id="sendText">Send text</button></div>
+            <div id="passwordPane" class="hidden"><label for="passwordMessage">Share a password</label><input id="passwordMessage" type="password" placeholder="Type or paste a password"><button class="primary full" id="sendPassword">Send password</button></div><div id="textPane"><label for="message">Share text or a password</label><textarea id="message" placeholder="Type or paste text here…"></textarea><button class="primary full" id="sendText">Send text</button></div>
             <div id="filePane" class="hidden"><label class="drop" for="file"><span class="upload-icon" aria-hidden="true">↑</span><strong>Choose a file</strong><small>Opens the file picker on this device</small><input type="file" id="file"></label><p class="filename" id="filename">No file selected</p><button class="primary full" id="sendFile" disabled>Send file</button></div>
             <p class="fine-print room-status" id="roomStatus">Only share this room link with the intended recipient.</p>
           </div>
@@ -112,6 +112,6 @@
   <footer class="site-footer"><a class="brand footer-brand" href="./"><span class="brand-mark" aria-hidden="true">↗</span><span>SendGet</span></a><span>Temporary sharing between your devices</span><a href="#top">Back to top ↑</a></footer>
 
   <script src="config.js?v=2"></script>
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
