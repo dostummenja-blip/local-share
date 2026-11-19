@@ -151,3 +151,10 @@ h1{font-size:clamp(32px,4.4vw,48px);letter-spacing:-1.8px}
  .feature-card{padding:16px}
  .how-card{padding:19px;gap:12px}
 }
+
+.room.host-connected .qr-image{display:none}
+.room.host-connected .room-connection .room-connect-panel{min-height:240px;justify-content:center}
+.room.host-connected .room-connect-panel h3{font-size:22px;margin:10px 0 4px}
+.room.host-connected .room-connect-panel p{font-size:14px}
+.room.host-connected .room-connection .mode-tabs{display:none}
+@media(max-width:700px){.room.host-connected .room-connection .room-connect-panel{min-height:200px}.room.host-connected .room-connect-panel h3{font-size:19px}}
