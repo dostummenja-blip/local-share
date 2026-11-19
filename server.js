@@ -117,4 +117,4 @@ app.use((error, _req, res, _next) => {
   console.error(error);
   res.status(500).json({ error: 'Unexpected server error.' });
 });
-app.listen(PORT, '0.0.0.0', () => console.log(`Local Share API listening on 0.0.0.0:${PORT}; GitHub Pages origin: ${CORS_ORIGIN}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`SendGet API listening on 0.0.0.0:${PORT}; GitHub Pages origin: ${CORS_ORIGIN}`));

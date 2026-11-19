@@ -3,37 +3,115 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f6f7fb">
-  <title>Local Share — move files privately</title>
+  <meta name="theme-color" content="#64a7dd">
+  <meta name="description" content="Send text and files between your devices with SendGet.">
+  <title>SendGet — frictionless sharing between devices</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="style-extra.css">
 </head>
 <body>
-  <main class="shell">
-    <header class="top"><a class="brand" href="./">Local<span>Share</span></a><span class="badge"><i></i> YOUR DEVICES</span></header>
-    <section class="hero" id="home">
-      <p class="eyebrow">QUICK DEVICE TRANSFER</p>
-      <h1>Send it to<br><span>your other screen.</span></h1>
-      <p class="intro">A temporary bridge between your devices. Your computer hosts the transfer; files are removed from it after download.</p>
-      <button class="primary" id="create">Create a connection <b>→</b></button>
-      <p class="hint" id="status">Your computer must be running the Local Share server.</p>
-      <div class="manual-join"><span>or join with a code</span><div><input id="joinCode" maxlength="10" placeholder="ROOM CODE" autocomplete="off"><button id="join">Join</button></div></div>
-    </section>
-    <section class="room hidden" id="room">
-      <div class="room-head"><div><p class="eyebrow">CONNECTED ROOM</p><h2>Ready to share</h2></div><span class="code" id="code"></span></div>
-      <div class="grid">
-        <div class="card qr-card"><div id="qr"></div><p>Scan this QR on your other device</p><button class="copy" id="copyLink">Copy connection link</button></div>
-        <div class="card share-card">
-          <div class="tabs"><button class="tab active" data-tab="text">Text</button><button class="tab" data-tab="file">File</button></div>
-          <div id="textPane"><label for="message">Message or snippet</label><textarea id="message" placeholder="Type or paste text here..."></textarea><button class="primary full" id="sendText">Send text</button></div>
-          <div id="filePane" class="hidden"><label class="drop" for="file"><span class="upload-icon">↑</span><strong>Choose a file</strong><small>Opens the file picker on this device</small><input type="file" id="file"></label><p class="filename" id="filename">No file selected</p><button class="primary full" id="sendFile" disabled>Upload file</button></div>
-          <p class="hint" id="roomStatus">Anyone with this room link can join.</p>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="SendGet home"><span class="brand-mark" aria-hidden="true">↗</span><span>SendGet</span></a>
+    <a class="header-link" href="#how">How it works</a>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="hero-copy">
+      <p class="eyebrow">QUICK, TEMPORARY DEVICE TRANSFER</p>
+      <h1>Frictionless sharing<br>between devices</h1>
+      <p class="hero-subtitle">Move a password, text snippet, or file from one screen to another in seconds.</p>
+    </div>
+  </section>
+
+  <main>
+    <section class="connect-area" id="connect" aria-label="Connect devices">
+      <div class="connection-card" id="home">
+        <div class="start-panel" id="home-scan">
+          <div class="qr-placeholder" aria-hidden="true"><span>▦</span></div>
+          <h2>Scan to connect</h2>
+          <p>Start a room, then scan the QR code with your other device.</p>
+          <button class="primary" id="create">Create connection <span aria-hidden="true">→</span></button>
         </div>
+        <div class="start-panel hidden" id="home-manual">
+          <div class="mini-icon" aria-hidden="true">⌨</div>
+          <h2>Connect manually</h2>
+          <p>Enter the room code shown on your other device.</p>
+          <label class="sr-only" for="joinCode">Room code</label>
+          <div class="code-entry"><input id="joinCode" maxlength="10" placeholder="ROOM CODE" autocomplete="off"><button id="join">Connect</button></div>
+        </div>
+        <div class="start-panel hidden" id="home-invite">
+          <div class="mini-icon" aria-hidden="true">↗</div>
+          <h2>Invite another device</h2>
+          <p>Create a temporary link and share it with the person you want to connect with.</p>
+          <button class="primary" id="createInvite">Create invite link <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="mode-tabs" role="tablist" aria-label="Connection method">
+          <button class="mode-tab active" data-home-mode="scan" role="tab" aria-selected="true">Scan</button>
+          <button class="mode-tab" data-home-mode="manual" role="tab" aria-selected="false">Manually</button>
+          <button class="mode-tab" data-home-mode="invite" role="tab" aria-selected="false">Invite</button>
+        </div>
+        <p class="fine-print" id="status">Your computer needs to be running SendGet.</p>
       </div>
-      <div class="card items-card"><div class="items-head"><h3>Shared items</h3><span>Files disappear 3 minutes after the first completed download</span></div><div id="items"><p class="empty">Nothing shared yet. Send text or a file from either device.</p></div></div>
+
+      <section class="room hidden" id="room" aria-label="SendGet room">
+        <div class="room-heading">
+          <div><p class="eyebrow">CONNECTED ROOM</p><h2>Ready to share</h2></div>
+          <span class="room-code" id="code"></span>
+        </div>
+        <div class="room-layout">
+          <div class="connection-card room-connection">
+            <div class="room-connect-panel" id="room-scan">
+              <div id="qr" class="qr-image"></div>
+              <h3>Scan to join this room</h3>
+              <p>Point your other device’s camera at this code.</p>
+            </div>
+            <div class="room-connect-panel hidden" id="room-manual">
+              <div class="mini-icon" aria-hidden="true">⌨</div>
+              <h3>Enter this code on your other device</h3>
+              <div class="large-code" id="roomCodeManual"></div>
+            </div>
+            <div class="room-connect-panel hidden" id="room-invite">
+              <div class="mini-icon" aria-hidden="true">↗</div>
+              <h3>Share a private invite</h3>
+              <p>Anyone with this temporary link can join the room.</p>
+              <div class="invite-link-row"><input id="inviteLink" readonly aria-label="Invite link"><button id="copyLink">Copy</button></div>
+            </div>
+            <div class="mode-tabs" role="tablist" aria-label="Connection details">
+              <button class="mode-tab active" data-room-mode="scan" role="tab" aria-selected="true">Scan</button>
+              <button class="mode-tab" data-room-mode="manual" role="tab" aria-selected="false">Manually</button>
+              <button class="mode-tab" data-room-mode="invite" role="tab" aria-selected="false">Invite</button>
+            </div>
+          </div>
+          <div class="connection-card share-card">
+            <div class="share-tabs" role="tablist" aria-label="Choose what to send">
+              <button class="share-tab active" data-tab="text" role="tab" aria-selected="true">Text</button>
+              <button class="share-tab" data-tab="file" role="tab" aria-selected="false">File</button>
+            </div>
+            <div id="textPane"><label for="message">Share text or a password</label><textarea id="message" placeholder="Type or paste text here…"></textarea><button class="primary full" id="sendText">Send text</button></div>
+            <div id="filePane" class="hidden"><label class="drop" for="file"><span class="upload-icon" aria-hidden="true">↑</span><strong>Choose a file</strong><small>Opens the file picker on this device</small><input type="file" id="file"></label><p class="filename" id="filename">No file selected</p><button class="primary full" id="sendFile" disabled>Send file</button></div>
+            <p class="fine-print room-status" id="roomStatus">Only share this room link with the intended recipient.</p>
+          </div>
+        </div>
+        <div class="connection-card items-card"><div class="items-head"><h3>Shared items</h3><span>Files are deleted from this computer 3 minutes after a completed download.</span></div><div id="items"><p class="empty">Nothing shared yet. Send text or a file from either device.</p></div></div>
+      </section>
     </section>
-    <footer>Hosted on GitHub Pages · Transfers run through your computer</footer>
+
+    <section class="about-section" id="how">
+      <div class="section-intro"><p class="eyebrow">SENDGET</p><h2>What can you send?</h2><p>Use SendGet when moving something between your devices is easier than retyping it or sending it through a chat.</p></div>
+      <div class="feature-grid">
+        <article class="feature-card"><div class="feature-icon" aria-hidden="true">⌁</div><p class="feature-kicker">SECURELY</p><h3>Share passwords</h3><p>Move a login from your phone to the computer you’re using without typing every character.</p></article>
+        <article class="feature-card"><div class="feature-icon" aria-hidden="true">¶</div><p class="feature-kicker">EASILY</p><h3>Share text snippets</h3><p>Send a note, a piece of code, a link, or any short text you need on another screen.</p></article>
+        <article class="feature-card"><div class="feature-icon" aria-hidden="true">⇧</div><p class="feature-kicker">EFFORTLESSLY</p><h3>Share files</h3><p>Send photos and documents between a phone, laptop, or tablet through your own computer.</p></article>
+      </div>
+      <section class="how-card">
+        <div><p class="eyebrow">HOW IT WORKS</p><h2>Your computer is the temporary bridge</h2></div>
+        <ol><li>Create a room and scan its QR code, enter its code, or share the invite link.</li><li>Choose text or a file on the device you’re sending from. The file picker opens on that device.</li><li>Download on the other device. The server copy is removed three minutes after the download completes.</li></ol>
+      </section>
+      <section class="privacy-card"><div class="privacy-mark" aria-hidden="true">i</div><div><h2>Temporary transfers, clear limits</h2><p>Files pass through and are stored temporarily on the computer running SendGet. Files that are never downloaded are cleaned up after 30 minutes. A downloaded copy on a phone or computer is outside SendGet’s control and must be deleted on that device separately.</p></div></section>
+    </section>
   </main>
-  <script src="config.js?v=2"></script><script src="app.js"></script>
+  <footer class="site-footer"><a class="brand footer-brand" href="./"><span class="brand-mark" aria-hidden="true">↗</span><span>SendGet</span></a><span>Temporary sharing between your devices</span><a href="#top">Back to top ↑</a></footer>
+
+  <script src="config.js?v=2"></script>
+  <script src="app.js"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 {
-  "name": "local-share",
+  "name": "sendget",
   "version": "1.0.0",
   "private": true,
   "description": "GitHub Pages UI with a self-hosted file relay",

@@ -1,6 +1,6 @@
-# Local Share
+# SendGet
 
-The website UI is a static site for GitHub Pages. Your computer runs the Node.js API and temporarily stores files. Devices communicate through that API.
+SendGet uses a static GitHub Pages site for its interface. Your computer runs the Node.js API and temporarily stores files. Devices communicate through that API.
 
 ## How it works
 
@@ -43,7 +43,7 @@ Options:
 - `PORT` — optional; defaults to `8787`.
 - `MAX_FILE_MB` — optional; defaults to `200`.
 
-The API listens on port 8787 on all network interfaces. For access from outside your home, expose it through a secure HTTPS tunnel or configure HTTPS and networking yourself. Point `LOCAL_SHARE_API` in `config.js` at that HTTPS URL. A tunnel keeps the file storage on your computer, but your computer and tunnel must stay running. Do not expose the API over plain HTTP on the public internet.
+The API listens on port 8787 on all network interfaces. For access from outside your home, expose it through a secure HTTPS tunnel or configure HTTPS and networking yourself. This test setup uses a temporary Cloudflare Quick Tunnel. Its public URL changes each time it starts, so update `LOCAL_SHARE_API` in `config.js` and publish that change when you restart it. Anyone with the URL can reach the local API while the tunnel is running. Quick Tunnels are for testing, have no uptime guarantee, and stop working when the process stops. Do not expose the API over plain HTTP on the public internet.
 
 ## Limits and privacy
 
